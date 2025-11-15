@@ -13,6 +13,13 @@ export default function Navbar() {
     router.push("/")
   }
 
+  const handleSellVoucherClick = (e: React.MouseEvent) => {
+    if (!isSignedIn) {
+      e.preventDefault()
+      router.push("/register")
+    }
+  }
+
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <div className="container flex items-center justify-between py-4">
@@ -24,7 +31,7 @@ export default function Navbar() {
           <Link href="/vouchers" className="text-foreground hover:text-primary transition">
             Browse Vouchers
           </Link>
-          <Link href="/upload" className="text-foreground hover:text-primary transition">
+          <Link href="/upload" onClick={handleSellVoucherClick} className="text-foreground hover:text-primary transition">
             Sell Voucher
           </Link>
           <Link href="/dashboard" className="text-foreground hover:text-primary transition">

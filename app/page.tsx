@@ -1,12 +1,28 @@
+"use client"
+
 import Image from "next/image"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import Link from "next/link"
 import vouchersData from "@/data/vouchers.json"
+import { useAuth } from "@/context/auth-context"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
+  const { isSignedIn } = useAuth()
+  const router = useRouter()
+
   // Extract unique brands for the Popular Brands section
   const brands = Array.from(new Set(vouchersData.map((v) => ({ name: v.brand, logo: v.logo }))))
+
+  const handleSellVoucherClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (!isSignedIn) {
+      router.push("/register")
+    } else {
+      router.push("/upload")
+    }
+  }
 
   return (
     <>
@@ -39,7 +55,8 @@ export default function Home() {
                 Buy a Voucher
               </Link>
               <Link
-                href="/register"
+                href={isSignedIn ? "/upload" : "/register"}
+                onClick={handleSellVoucherClick}
                 className="bg-accent text-red-500 px-8 py-3 rounded-lg font-bold hover:bg-accent/90 transition"
               >
                 Sell a Voucher
@@ -117,10 +134,10 @@ export default function Home() {
 
             <div className="flex gap-4 justify-center flex-wrap">
               <Link
-                href="/register"
+                href={isSignedIn ? "/dashboard" : "/register"}
                 className="bg-white text-primary px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition"
               >
-                Get Started Now
+                {isSignedIn ? "Go to Dashboard" : "Get Started Now"}
               </Link>
               <Link
                 href="/vouchers"

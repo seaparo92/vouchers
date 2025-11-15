@@ -54,6 +54,12 @@ export default function RegisterPage() {
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-foreground mb-2">Create Your Account</h1>
             <p className="text-muted-foreground">Join VoucherTrade and start buying or selling vouchers</p>
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mt-6 max-w-xl mx-auto">
+              <p className="text-sm text-foreground">
+                <span className="font-semibold">💡 To sell vouchers,</span> you need to create an account first.
+                Registration is quick and helps us keep the marketplace safe for everyone.
+              </p>
+            </div>
           </div>
 
           <div className="card">

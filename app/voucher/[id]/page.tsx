@@ -1,5 +1,6 @@
 "use client"
 import { useEffect } from "react"
+import Image from "next/image"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import Link from "next/link"
@@ -50,7 +51,15 @@ export default function VoucherDetailPage({ params }: { params: { id: string } }
             {/* Left - Voucher Info */}
             <div>
               <div className="card text-center mb-6">
-                <div className="text-8xl mb-6">{voucher.logo}</div>
+                <div className="mb-6 flex items-center justify-center">
+                  <Image
+                    src={voucher.logo || "/placeholder.svg"}
+                    alt={voucher.brand}
+                    width={200}
+                    height={200}
+                    className="object-contain"
+                  />
+                </div>
                 <h1 className="text-4xl font-bold text-foreground mb-2">{voucher.brand}</h1>
                 <p className="text-lg text-muted-foreground mb-4">{voucher.category}</p>
                 {voucher.verified && <span className="badge badge-success text-sm">✓ Verified & Safe</span>}
@@ -126,7 +135,15 @@ export default function VoucherDetailPage({ params }: { params: { id: string } }
                     href={`/voucher/${related.id}`}
                     className="card hover:shadow-lg hover:border-primary transition cursor-pointer group"
                   >
-                    <div className="text-4xl mb-4 group-hover:scale-110 transition">{related.logo}</div>
+                    <div className="mb-4 flex items-center justify-center h-24">
+                      <Image
+                        src={related.logo || "/placeholder.svg"}
+                        alt={related.brand}
+                        width={100}
+                        height={100}
+                        className="object-contain group-hover:scale-110 transition"
+                      />
+                    </div>
                     <h3 className="font-bold text-lg text-foreground mb-1">{related.brand}</h3>
                     <p className="text-muted-foreground text-sm mb-4">{related.category}</p>
                     <p className="text-2xl font-bold text-primary">R{Math.round(related.faceValue * 0.9)}</p>

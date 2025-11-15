@@ -2,14 +2,18 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { useToast, ToastContainer } from "@/components/toast"
 import Link from "next/link"
+import { useAuth } from "@/context/auth-context"
+import { useRouter } from "next/navigation"
 
 export default function UploadPage() {
   const { toasts, showToast } = useToast()
+  const { isSignedIn } = useAuth()
+  const router = useRouter()
   const [voucherValue, setVoucherValue] = useState<number>(500)
   const [voucherProvider, setVoucherProvider] = useState<string>("Takealot")
   const [voucherType, setVoucherType] = useState<string>("Digital Code")
@@ -23,6 +27,14 @@ export default function UploadPage() {
   const buyerPrice = Math.round(voucherValue * 0.9)
   const sellerPayout = Math.round(voucherValue * 0.7)
   const platformFee = voucherValue - buyerPrice - (voucherValue - sellerPayout)
+
+  // Redirect to registration if not signed in
+  useEffect(() => {
+    if (!isSignedIn) {
+      showToast("Please sign up to sell vouchers", "error")
+      router.push("/register")
+    }
+  }, [isSignedIn, router, showToast])
 
   const providers = [
     "Takealot",
