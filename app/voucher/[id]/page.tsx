@@ -6,6 +6,9 @@ import Footer from "@/components/footer"
 import Link from "next/link"
 import vouchersData from "@/data/vouchers.json"
 import { useToast, ToastContainer } from "@/components/toast"
+import { useAuth } from "@/context/auth-context"
+import { useCart } from "@/context/cart-context"
+import { useRouter } from "next/navigation"
 
 export default function VoucherDetailPage({ params }: { params: { id: string } }) {
   useEffect(() => {
@@ -13,6 +16,9 @@ export default function VoucherDetailPage({ params }: { params: { id: string } }
   }, [params.id])
 
   const { toasts, showToast } = useToast()
+  const { isSignedIn } = useAuth()
+  const { addToCart } = useCart()
+  const router = useRouter()
   const voucher = vouchersData.find((v) => v.id === Number(params.id))
   const relatedVouchers = vouchersData
     .filter((v) => v.category === voucher?.category && v.id !== voucher?.id)
@@ -33,8 +39,50 @@ export default function VoucherDetailPage({ params }: { params: { id: string } }
   const buyerPrice = Math.round(voucher.faceValue * 0.9)
   const savings = voucher.faceValue - buyerPrice
 
+  const handleAddToCart = () => {
+    if (!isSignedIn) {
+      showToast("Please sign in to add items to cart", "error")
+      setTimeout(() => {
+        router.push("/login")
+      }, 1500)
+      return
+    }
+
+    if (voucher) {
+      addToCart({
+        id: voucher.id,
+        brand: voucher.brand,
+        logo: voucher.logo,
+        category: voucher.category,
+        faceValue: voucher.faceValue,
+        buyerPrice: buyerPrice,
+        expiryDate: voucher.expiryDate,
+      })
+      showToast(`${voucher.brand} voucher added to cart!`, "success")
+    }
+  }
+
   const handleBuyNow = () => {
-    showToast(`Added R${buyerPrice} ${voucher.brand} voucher to cart!`, "success")
+    if (!isSignedIn) {
+      showToast("Please sign in or register to purchase vouchers", "error")
+      setTimeout(() => {
+        router.push("/register")
+      }, 1500)
+      return
+    }
+
+    if (voucher) {
+      addToCart({
+        id: voucher.id,
+        brand: voucher.brand,
+        logo: voucher.logo,
+        category: voucher.category,
+        faceValue: voucher.faceValue,
+        buyerPrice: buyerPrice,
+        expiryDate: voucher.expiryDate,
+      })
+      router.push("/cart")
+    }
   }
 
   return (
@@ -103,7 +151,9 @@ export default function VoucherDetailPage({ params }: { params: { id: string } }
                   <button onClick={handleBuyNow} className="w-full btn-primary py-3 font-bold text-lg">
                     Buy Now - R{buyerPrice}
                   </button>
-                  <button className="w-full btn-secondary py-3 font-bold">Add to Wishlist</button>
+                  <button onClick={handleAddToCart} className="w-full btn-secondary py-3 font-bold">
+                    Add to Cart
+                  </button>
                 </div>
 
                 <div className="bg-muted rounded p-4">

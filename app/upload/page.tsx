@@ -6,7 +6,6 @@ import { useState, useEffect } from "react"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 import { useToast, ToastContainer } from "@/components/toast"
-import Link from "next/link"
 import { useAuth } from "@/context/auth-context"
 import { useRouter } from "next/navigation"
 
@@ -24,6 +23,8 @@ export default function UploadPage() {
   const [fileName, setFileName] = useState<string>("")
   const [proofFileName, setProofFileName] = useState<string>("")
 
+  const [showFAQ, setShowFAQ] = useState<boolean>(false)
+  const [showPrivacy, setShowPrivacy] = useState<boolean>(false)
   const buyerPrice = Math.round(voucherValue * 0.9)
   const sellerPayout = Math.round(voucherValue * 0.7)
   const platformFee = voucherValue - buyerPrice - (voucherValue - sellerPayout)
@@ -204,6 +205,7 @@ export default function UploadPage() {
                 <h2 className="text-2xl font-bold text-foreground mb-6">Verification Documents</h2>
                 <p className="text-muted-foreground mb-6">
                   Please upload both the voucher image and proof of purchase (e.g., till slip, receipt).
+                
                 </p>
 
                 <div className="space-y-6">
@@ -245,7 +247,7 @@ export default function UploadPage() {
                         accept="image/*,.pdf"
                       />
                       <label htmlFor="proof-upload" className="inline-block btn-primary cursor-pointer">
-                        Choose File
+                        Choose File 
                       </label>
                       {proofFileName && <p className="text-sm text-success mt-4">✓ {proofFileName} selected</p>}
                     </div>
@@ -306,7 +308,15 @@ export default function UploadPage() {
                   <input type="checkbox" id="terms" className="mt-1" />
                   <label htmlFor="terms" className="text-sm text-foreground">
                     I confirm that the voucher is legitimate, unused, and I have the right to sell it. I understand that
-                    VoucherTrade reserves the right to reject vouchers that don't meet standards.
+                    VoucherTrade reserves the right to reject vouchers that don't meet standards. By submitting, you agree to our{" "}
+                    <button
+                      type="button"
+                      onClick={() => setShowPrivacy(true)}
+                      className="text-primary hover:underline"
+                    >
+                      Privacy Policy
+                    </button>
+                    .
                   </label>
                 </div>
               </div>
@@ -318,14 +328,247 @@ export default function UploadPage() {
 
               <p className="text-center text-sm text-muted-foreground">
                 Questions?{" "}
-                <Link href="#" className="text-primary hover:underline">
+                <button
+                  type="button"
+                  onClick={() => setShowFAQ(true)}
+                  className="text-primary hover:underline"
+                >
                   See seller FAQ
-                </Link>
+                </button>
               </p>
             </form>
           </div>
         </div>
       </main>
+
+      {/* FAQ Modal */}
+      {showFAQ && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-background border-b border-border p-6 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-foreground">Seller FAQ</h2>
+              <button
+                onClick={() => setShowFAQ(false)}
+                className="text-muted-foreground hover:text-foreground text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div>
+                <h3 className="font-bold text-foreground mb-2">How much will I receive for my voucher?</h3>
+                <p className="text-muted-foreground">
+                  You will receive 70% of the face value when your voucher is purchased. Payment is processed 5-7 business days after the buyer confirms receipt.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">How long does verification take?</h3>
+                <p className="text-muted-foreground">
+                  Our team reviews all vouchers within 24 hours. You'll receive an email notification once your voucher is approved and listed.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">What documents do I need?</h3>
+                <p className="text-muted-foreground">
+                  You need to upload both the voucher image (code/barcode) and proof of purchase (till slip or receipt). This helps us verify legitimacy.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">What if my voucher doesn't sell?</h3>
+                <p className="text-muted-foreground">
+                  Your voucher stays listed until it sells or expires. You can remove it at any time from your dashboard. There are no listing fees.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">Can I sell partially used vouchers?</h3>
+                <p className="text-muted-foreground">
+                  No, we only accept unused vouchers with their full face value intact. The voucher must not have been redeemed or partially used.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">How do I get paid?</h3>
+                <p className="text-muted-foreground">
+                  Payment is made via EFT to your bank account 5-7 business days after the buyer confirms successful redemption. You'll receive a payment notification email.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">What happens if the voucher is invalid?</h3>
+                <p className="text-muted-foreground">
+                  If a buyer reports that your voucher is invalid or already used, we will investigate. Fraudulent listings may result in account suspension and legal action.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">Can I edit my listing after submission?</h3>
+                <p className="text-muted-foreground">
+                  Once submitted, listings cannot be edited. However, you can remove the listing and create a new one if needed before it's purchased.
+                </p>
+              </div>
+            </div>
+
+            <div className="sticky bottom-0 bg-background border-t border-border p-6">
+              <button
+                onClick={() => setShowFAQ(false)}
+                className="w-full btn-primary"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Privacy Policy Modal */}
+      {showPrivacy && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-background border-b border-border p-6 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-foreground">Privacy Policy</h2>
+              <button
+                onClick={() => setShowPrivacy(false)}
+                className="text-muted-foreground hover:text-foreground text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div>
+                <h3 className="font-bold text-foreground mb-2">1. Information We Collect</h3>
+                <p className="text-muted-foreground mb-2">
+                  When you use VoucherTrade, we collect the following information:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+                  <li>Personal information (name, email address, phone number)</li>
+                  <li>Payment and banking details for processing transactions</li>
+                  <li>Voucher images and proof of purchase documents</li>
+                  <li>Transaction history and account activity</li>
+                  <li>Device information and IP address for security purposes</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">2. How We Use Your Information</h3>
+                <p className="text-muted-foreground mb-2">
+                  We use your information to:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+                  <li>Verify and process voucher listings</li>
+                  <li>Facilitate secure transactions between buyers and sellers</li>
+                  <li>Process payments and payouts</li>
+                  <li>Communicate with you about your transactions and account</li>
+                  <li>Prevent fraud and ensure platform security</li>
+                  <li>Improve our services and user experience</li>
+                  <li>Comply with legal obligations</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">3. Information Sharing</h3>
+                <p className="text-muted-foreground">
+                  We do not sell your personal information. We may share your information with:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4 mt-2">
+                  <li>Payment processors to complete transactions</li>
+                  <li>Service providers who assist in operating our platform</li>
+                  <li>Law enforcement when required by law</li>
+                  <li>Other users (limited information) necessary to complete transactions</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">4. Data Security</h3>
+                <p className="text-muted-foreground">
+                  We implement industry-standard security measures to protect your personal information, including encryption, secure servers, and regular security audits. However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">5. Data Retention</h3>
+                <p className="text-muted-foreground">
+                  We retain your personal information for as long as your account is active or as needed to provide services. Transaction records are kept for 7 years to comply with South African tax and financial regulations.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">6. Your Rights</h3>
+                <p className="text-muted-foreground mb-2">
+                  Under the Protection of Personal Information Act (POPIA), you have the right to:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+                  <li>Access your personal information</li>
+                  <li>Correct inaccurate information</li>
+                  <li>Request deletion of your information (subject to legal requirements)</li>
+                  <li>Object to processing of your information</li>
+                  <li>Withdraw consent at any time</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">7. Cookies</h3>
+                <p className="text-muted-foreground">
+                  We use cookies and similar technologies to improve your experience, analyze site usage, and assist in our marketing efforts. You can control cookie preferences through your browser settings.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">8. Third-Party Links</h3>
+                <p className="text-muted-foreground">
+                  Our platform may contain links to third-party websites. We are not responsible for the privacy practices of these websites. We encourage you to review their privacy policies.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">9. Children's Privacy</h3>
+                <p className="text-muted-foreground">
+                  VoucherTrade is not intended for users under the age of 18. We do not knowingly collect personal information from children.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">10. Changes to This Policy</h3>
+                <p className="text-muted-foreground">
+                  We may update this privacy policy from time to time. We will notify you of any significant changes by email or through a notice on our platform.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-foreground mb-2">11. Contact Us</h3>
+                <p className="text-muted-foreground">
+                  If you have questions about this privacy policy or how we handle your personal information, please contact us at:
+                </p>
+                <p className="text-muted-foreground mt-2">
+                  Email: privacy@vouchertrade.co.za<br />
+                  Address: Cape Town, South Africa
+                </p>
+              </div>
+
+              <div className="bg-muted p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  <strong>Last Updated:</strong> January 2025<br />
+                  <strong>Effective Date:</strong> January 2025
+                </p>
+              </div>
+            </div>
+
+            <div className="sticky bottom-0 bg-background border-t border-border p-6">
+              <button
+                onClick={() => setShowPrivacy(false)}
+                className="w-full btn-primary"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <ToastContainer toasts={toasts} />
       <Footer />
